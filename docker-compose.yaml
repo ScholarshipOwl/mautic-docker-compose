@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  mautic:
+    image: mautic/mautic:v4
+    restart: always
+    networks:
+      - database
+      - mautic
+    depends_on:
+      - mauticMysql
+    ports:
+      - 8080:80
+    environment:
+      - MAUTIC_DB_HOST=mauticMysql
+      - MAUTIC_DB_USER=mautic
+      - MAUTIC_DB_PASSWORD=secret
+      - MAUTIC_DB_NAME=mautic
+      - MAUTIC_RUN_CRON_JOBS=true
+    volumes:
+      - ./.storage/mautic:/var/www/html
+
+  mauticMysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - database
+    environment:
+      - MYSQL_USER=mautic
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=mautic
+      - MYSQL_ROOT_PASSWORD=secret
+    volumes:
+      - ./.storage/mysql:/var/lib/mysql
+
+  mauticMailhog:
+    image: mailhog/mailhog
+    ports:
+      - 8025:8025
+    networks:
+      - mautic
+
+networks:
+  database:
+  mautic:
