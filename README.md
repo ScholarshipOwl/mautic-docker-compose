@@ -19,6 +19,26 @@ Finish setup and you are ready to use.
 ### Database Setup
 Leave configs untouched in order to use pre-configured MySQL server.
 
+You may connect to database from docker container.
+By default, we do not map MySQL server port to the localhost port as we suggest you have mysql running.
+We propose to override local docker-compose.yaml and map mysql container port to localone.
+
+File: `docker-compose.override.yml` ⇩
+```yaml
+version: '3'
+
+services:
+  mauticMysql:
+    ports:
+      - 3316:3306
+```
+
+Now you can connect to DB on localhost and port `3316`. Username `root` and password `secret`.
+
+```shell
+mysql -h 127.0.0.1 -P 3316 -u root -psecret
+```
+
 ### Mailhog SMTP Server
 You may use [Mailhog](https://github.com/mailhog/MailHog) server for testing the emails.
 
